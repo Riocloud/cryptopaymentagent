@@ -6,6 +6,14 @@
 
 ---
 
+## 📜 License
+
+BSD 3-Clause License
+
+Copyright (c) 2026 Riocloud
+
+---
+
 ## 🌟 Vision - 愿景
 
 ### 背景：为什么需要 CryptoPaymentAgent？
@@ -525,11 +533,3 @@ npm run dev
 - **GitHub**: https://github.com/Riocloud/cryptopaymentagent
 - **Email**: partnership@riocloud.com
 - **Telegram**: @riocloud
-
----
-
-## 📜 License
-
-BSD 3-Clause License
-
-Copyright (c) 2024 Riocloud
