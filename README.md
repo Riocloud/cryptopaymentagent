@@ -1,4 +1,4 @@
-# CryptoPaymentAgent
+# SwarmPay
 
 **面向 AI Agent 的加密支付基础设施**
 
@@ -491,8 +491,8 @@ Agent 净赚 $28
 
 ```bash
 # 安装
-git clone https://github.com/Riocloud/cryptopaymentagent.git
-cd cryptopaymentagent
+git clone https://github.com/Riocloud/SwarmPay.git
+cd SwarmPay
 npm install
 
 # 配置
@@ -530,6 +530,6 @@ npm run dev
 
 ### 联系我们
 
-- **GitHub**: https://github.com/Riocloud/cryptopaymentagent
+- **GitHub**: https://github.com/Riocloud/SwarmPay
 - **Email**: partnership@riocloud.com
 - **Telegram**: @riocloud
