@@ -2,11 +2,19 @@ import { fastify, initApp } from './api/server';
 import { exchangeRoutes } from './api/exchange';
 import { paymentRoutes } from './api/payment';
 import { walletRoutes } from './api/wallet';
+import { routerRoutes } from './api/router';
+import { intentRoutes, agentRoutes, groupRoutes } from './api/phase2';
 
 // 注册路由
 fastify.register(exchangeRoutes, { prefix: '/api/v1' });
 fastify.register(paymentRoutes, { prefix: '/api/v1' });
 fastify.register(walletRoutes, { prefix: '/api/v1' });
+fastify.register(routerRoutes, { prefix: '/api/v1' });
+
+// Phase 2: Intent & Matching
+fastify.register(intentRoutes, { prefix: '/api/v1' });
+fastify.register(agentRoutes, { prefix: '/api/v1' });
+fastify.register(groupRoutes, { prefix: '/api/v1' });
 
 // 启动服务
 const start = async () => {

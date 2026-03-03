@@ -126,6 +126,7 @@ model UserIntent {
   
   type        String   // transport, food, shopping, service
   intent      String   // JSON
+  preferences String?  // JSON
   
   status      String   // pending, matching, matched, completed, cancelled
   
