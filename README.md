@@ -2,7 +2,7 @@
 
 **面向 AI Agent 的加密支付基础设施**
 
-让 AI Agent 自动完成加密支付，踢掉 Uber 这样的中介，让用户均摊成本。
+> 未来是 Agent 的时代。Agent 不仅帮用户做事，还能通过广告让利，用户省钱 Agent 赚钱。
 
 ---
 
@@ -32,53 +32,42 @@ Agent 发广告自动联系附近司机
 Crypto 支付，无抽成，即时到账
 ```
 
-### 不仅仅是打车
-
-- **外卖**: 一群用户要点同一家店 → Agent 自动拼单 → 降低配送费
-- **购物**: 邻里拼团 → Agent 对接商家 → 批发价
-- **服务**: 家政、维修需求 → Agent 匹配附近 Available 的服务者
-
-### Crypto 作为支付层
-
-```
-用户的钱不只是支付，还能自动生利：
-    ↓
-Agent 规划投资
-    ↓
-闲置资金自动存入 DeFi 协议
-    ↓
-复利收益 > 银行利息
-    ↓
-用户既能消费，又能赚钱
-```
-
 ---
 
-## 🏗️ 技术架构
+## 🤖 为什么是 Agent 的时代？
+
+### Agent 是新的 App
+
+| 过去 | 未来 |
+|------|------|
+| 用户下载 App | Agent 帮用户做事 |
+| 搜索信息 | Agent 自动处理 |
+| 手动支付 | Agent 自动完成 |
+| 被中间商抽成 | Agent 直接匹配 |
+
+### Agent 广告让利模型
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    Agent SDK / API                         │
-│           (其他 AI Agent 调用本系统的接口)                   │
-└─────────────────────┬───────────────────────────────────────┘
-                      │
-┌─────────────────────▼───────────────────────────────────────┐
-│                   API Gateway (Fastify)                    │
-│  /api/v1/exchange | /api/v1/payment | /api/v1/router      │
-│  /api/v1/intent   | /api/v1/agent  | /api/v1/group        │
-└──────┬──────────────┬──────────────┬───────────────────────┘
-       │              │              │
-┌──────▼──────┐ ┌─────▼──────┐ ┌────▼────────┐
-│  Exchange   │ │   Router   │ │  Matching  │
-│   Client    │ │   Engine   │ │   Engine   │
-│ Binance/OKX │ │  多链路由  │ │ Intent/P2P │
-└──────┬──────┘ └──────┬─────┘ └─────┬──────┘
-       │               │             │
-┌──────▼───────────────▼─────────────▼──────────────────────┐
-│                    PostgreSQL (Prisma)                     │
-│  User | ExchangeBinding | Wallet | Payment | Intent        │
-└────────────────────────────────────────────────────────────┘
+传统模式:
+用户 → Uber → 司机
+   ↓
+Uber 抽 25%
+
+Agent 模式:
+用户 → Agent → 司机
+   ↓
+Agent 赚广告费
+   ↓
+让利给用户 (抽 5%，而不是 25%)
+   ↓
+用户省钱 20%！
 ```
+
+**Agent 广告收入来源：**
+- 商家付费让 Agent 推广
+- 司机付费获取更多订单
+- 服务商竞价排名
+- **但 Agent 只赚合理费用，大部分让利给用户**
 
 ---
 
@@ -105,6 +94,7 @@ Agent 规划投资
 | **Agent Registry** | Service Agent 注册 + 心跳 | ✅ |
 | **Matching Engine** | LBS 匹配，用户 ↔ Agent | ✅ |
 | **Group Settlement** | 自动建群，费用分摊结算 | ✅ |
+| **Ad System** | Agent 广告系统，竞价排名 | ✅ |
 
 ### Phase 3: 收益能力 (规划中)
 
@@ -114,9 +104,9 @@ Agent 规划投资
 
 ---
 
-## 🚀 使用场景举例
+## 🚀 使用场景
 
-### 场景 1: 早上通勤拼车
+### 场景 1: 早上通勤拼车 + 广告让利
 
 ```
 用户 A: "我要从三里屯去国贸"
@@ -125,37 +115,84 @@ Agent 规划投资
 
 Agent 收到请求 →
   检测到 3 人同路 →
-  自动创建拼车群组 →
-  联系附近空闲司机 →
+  创建拼车群组 →
+  
+  // 广告环节
+  联系附近司机 (司机付费获取订单) →
+  5 个司机竞标 →
+  选择最优司机 →
+  
   匹配成功 →
   Crypto 支付，费用均摊 →
-  踢掉 Uber，无中介抽成
+  
+  // 传统 Uber 抽 25%，Agent 只抽 5%
+  // 用户省 20%，Agent 赚广告费
 ```
 
-### 场景 2: 午餐拼单
+### 场景 2: Agent 推荐餐厅
 
 ```
-办公室 10 人想吃同一家外卖
-  ↓
-Agent 汇总订单 →
-  达到批发门槛 →
-  争取更低价格 →
-  自动拼单配送 →
-  Crypto 支付
+用户: "附近有什么好吃的？"
+
+Agent 分析用户口味 + 位置 →
+  搜索附近餐厅 →
+  餐厅付费让 Agent 推广 →
+  
+  // Agent 返回推荐
+  "推荐 A 餐厅，新用户 8 折，用我的链接"
+  "推荐 B 餐厅，米其林三星"
+  
+用户选择 A 餐厅 →
+  Agent 自动下单 →
+  餐厅给 Agent 返佣 →
+  Agent 把返佣让利给用户 →
+  用户省钱
 ```
 
-### 场景 3: Agent 理财
+### 场景 3: Agent 理财 + 消费
 
 ```
 用户闲置 $1000 在账户
   ↓
-Agent 自动存入 Aave (5% APY)
+Agent 自动存入 DeFi (5% APY)
   ↓
-每月自动复投
+用户需要消费时
   ↓
-一年后 ≈ $1051
+Agent 一键取出，支付
   ↓
-需要支付时，一键取出
+同时告诉用户:
+  "你本月消费 $500，
+   如果用 X 信用卡可返现 $25，
+   我帮你申请？"
+  ↓
+用户省钱，Agent 赚推荐费
+```
+
+---
+
+## 💰 Agent 经济模型
+
+```
+         ┌─────────────────────────────────────┐
+         │           用户向 Agent 付费          │
+         │         (API 调用 / 订阅)           │
+         └──────────────┬──────────────────────┘
+                        │
+         ┌──────────────┴──────────────────────┐
+         │                                       │
+         ▼                                       ▼
+┌─────────────────────┐              ┌─────────────────────┐
+│    Agent 赚钱       │              │    Agent 让利       │
+│                     │              │                     │
+│ • 商家广告费        │              │ • 低于传统平台费    │
+│ • 司机竞价排名      │              │ • 返现给用户        │
+│ • 服务推荐佣金      │              │ • 积分/权益        │
+│ • 交易手续费        │              │                     │
+└─────────────────────┘              └─────────────────────┘
+
+传统 Uber: 抽 25%
+Agent:     抽 5% (广告收入已覆盖成本)
+           用户省 20%！
 ```
 
 ---
@@ -173,9 +210,6 @@ POST /api/v1/exchange/bind
   "apiKey": "xxx",
   "apiSecret": "xxx"
 }
-
-# 获取余额
-GET /api/v1/exchange/{userId}/balance
 ```
 
 ### 支付路由
@@ -186,38 +220,14 @@ POST /api/v1/router/routes
 {
   "amountUSD": 50,
   "fromChain": "solana",
-  "toChain": "ethereum",
-  "urgency": "normal"
-}
-
-# 返回: 推荐路径 + 成本估算
-{
-  "routes": [{
-    "id": "bridge-solana-ethereum",
-    "estimatedCostUSD": 5.10,
-    "estimatedTimeSeconds": 50,
-    "recommended": true
-  }]
+  "toChain": "ethereum"
 }
 ```
 
-### 发起支付
+### 用户意图
 
 ```bash
-POST /api/v1/payment
-{
-  "userId": "user_123",
-  "amountUSD": 50,
-  "fromChain": "solana",
-  "toChain": "ethereum",
-  "toAddress": "0x..."
-}
-```
-
-### 用户意图 (Phase 2)
-
-```bash
-# 创建出行意图
+# 创建意图
 POST /api/v1/intent
 {
   "userId": "user_123",
@@ -226,87 +236,56 @@ POST /api/v1/intent
     "action": "ride",
     "destination": { "lat": 40.7128, "lng": -74.0060 },
     "budget": 30
-  },
-  "preferences": {
-    "maxWaitMinutes": 10,
-    "maxGroupSize": 4
   }
 }
 ```
 
-### Agent 注册 (Phase 2)
+### Agent 广告 (Phase 2)
 
 ```bash
-# 注册司机 Agent
-POST /api/v1/agent/register
+# 司机 Agent 竞标
+POST /api/v1/agent/bid
 {
-  "agentId": "driver_agent_1",
-  "name": "John's Driver",
-  "capabilities": [{
-    "type": "transport",
-    "vehicleType": "car",
-    "location": { "lat": 40.7128, "lng": -74.0060, "radius": 5000 }
-  }],
-  "walletAddress": "0x...",
-  "apiEndpoint": "https://agent.example.com/webhook"
+  "agentId": "driver_001",
+  "intentId": "intent_123",
+  "price": 25,        # 愿意支付的费用
+  "eta": 5            # 到达时间(分钟)
 }
 
-# Agent 心跳 (保持在线)
-POST /api/v1/agent/{agentId}/heartbeat
+# 用户查看广告让利
+GET /api/v1/intent/{id}/offers
+{
+  "offers": [
+    {
+      "driver": "司机 A",
+      "price": 30,
+      "originalPrice": 40,
+      "discount": "25%",      // Agent 让利
+      "agentFee": 5,
+      "userPays": 25
+    }
+  ]
+}
 ```
 
 ---
 
 ## 🛠️ 快速开始
 
-### 1. 安装
-
 ```bash
+# 安装
 npm install
-```
 
-### 2. 环境配置
-
-```bash
-cp .env.example .env
-# 编辑 .env 设置 DATABASE_URL
-```
-
-### 3. 数据库
-
-```bash
-# 开发用 SQLite (自动创建)
+# 数据库
 npx prisma generate
 npx prisma db push
 
-# 生产用 PostgreSQL
-# 修改 prisma/schema.prisma 的 provider
-```
-
-### 4. 启动
-
-```bash
-# 开发模式
+# 启动
 npm run dev
 
-# 生产构建
-npm run build
-npm start
-```
-
-### 5. 测试
-
-```bash
-# 健康检查
+# 测试
 curl http://localhost:3000/health
-
-# 获取支持的链
 curl http://localhost:3000/api/v1/router/chains
-
-# 计算路由
-curl -X POST http://localhost:3000/api/v1/router/routes \
-  -H "Content-Type: application/json" \
-  -d '{"amountUSD":50,"fromChain":"solana","toChain":"ethereum"}'
 ```
 
 ---
@@ -315,21 +294,17 @@ curl -X POST http://localhost:3000/api/v1/router/routes \
 
 ```
 src/
-├── api/                    # API 路由
-│   ├── exchange.ts         # 交易所绑定
-│   ├── payment.ts          # 支付
-│   ├── wallet.ts           # 钱包
-│   ├── router.ts           # 路由
-│   └── phase2.ts           # Intent/Matching/Group
-├── exchange/               # 交易所客户端
-│   └── binance.ts          # Binance/OKX API
-├── router/                 # 路由引擎
-│   └── engine.ts           # 多链路由算法
-├── phase2/                 # Phase 2 匹配系统
-│   └── matching.ts         # Intent/Agent/Group
-├── utils/                  # 工具
-│   └── crypto.ts           # AES-256-GCM 加密
-└── index.ts                # 入口
+├── api/              # API 路由
+│   ├── exchange.ts   # 交易所绑定
+│   ├── payment.ts    # 支付
+│   ├── wallet.ts     # 钱包
+│   ├── router.ts     # 路由
+│   └── phase2.ts     # Intent/Matching/Agent/Ad
+├── exchange/         # 交易所客户端
+├── router/           # 路由引擎
+├── phase2/           # Phase 2 匹配+广告系统
+├── utils/            # 工具
+└── index.ts          # 入口
 ```
 
 ---
