@@ -63,17 +63,11 @@ Agent 赚广告费
 用户省钱 20%！
 ```
 
-**Agent 广告收入来源：**
-- 商家付费让 Agent 推广
-- 司机付费获取更多订单
-- 服务商竞价排名
-- **但 Agent 只赚合理费用，大部分让利给用户**
-
 ---
 
-## 📦 核心模块
+## 📦 完整功能模块
 
-### Phase 1: 支付能力 (已完成)
+### Phase 1: 支付能力 ✅
 
 | 模块 | 说明 | 状态 |
 |------|------|------|
@@ -84,9 +78,7 @@ Agent 赚广告费
 
 **支持链**: Solana, Ethereum, Arbitrum, Base, Optimism, Polygon, Tron
 
-**支持交易所**: Binance, OKX, Coinbase, Bybit
-
-### Phase 2: 匹配能力 (已完成)
+### Phase 2: 匹配 + 广告让利 ✅
 
 | 模块 | 说明 | 状态 |
 |------|------|------|
@@ -96,76 +88,179 @@ Agent 赚广告费
 | **Group Settlement** | 自动建群，费用分摊结算 | ✅ |
 | **Ad System** | Agent 广告系统，竞价排名 | ✅ |
 
-### Phase 3: 收益能力 (规划中)
+### Phase 2.5: 信任机制 ✅ (新增)
 
-- Yield Account（收益账户）
-- 智能分配（借贷/流动性/套利）
-- 自动复投
+| 模块 | 说明 | 状态 |
+|------|------|------|
+| **Escrow** | 托管系统，资金锁定，完成后释放 | ✅ |
+| **Reputation** | 链上声誉，0-100 分，不可篡改 | ✅ |
+| **Bond** | Agent 保证金，违规可冻结 | ✅ |
+| **Arbitration** | 争议仲裁流程 | ✅ |
+
+### Phase 3: DeFi 收益 ✅
+
+| 模块 | 说明 | 状态 |
+|------|------|------|
+| **Yield Account** | 收益账户 | ✅ |
+| **Strategy** | 智能分配（借贷/流动性） | ✅ |
+| **Projections** | 预期收益计算 | ✅ |
+| **Auto-Compound** | 自动复投 | ✅ |
 
 ---
 
-## 🚀 使用场景
+## 🔌 API 概览
 
-### 场景 1: 早上通勤拼车 + 广告让利
+### 支付 (Phase 1)
 
-```
-用户 A: "我要从三里屯去国贸"
-用户 B: "我要从三里屯去国贸"
-用户 C: "我要从三里屯去国贸"
+```bash
+# 绑定交易所
+POST /api/v1/exchange/bind
+{ "userId": "user_123", "exchange": "binance", "apiKey": "xxx", "apiSecret": "xxx" }
 
-Agent 收到请求 →
-  检测到 3 人同路 →
-  创建拼车群组 →
-  
-  // 广告环节
-  联系附近司机 (司机付费获取订单) →
-  5 个司机竞标 →
-  选择最优司机 →
-  
-  匹配成功 →
-  Crypto 支付，费用均摊 →
-  
-  // 传统 Uber 抽 25%，Agent 只抽 5%
-  // 用户省 20%，Agent 赚广告费
+# 获取最优路由
+POST /api/v1/router/routes
+{ "amountUSD": 50, "fromChain": "solana", "toChain": "ethereum" }
+
+# 发起支付
+POST /api/v1/payment
+{ "userId": "user_123", "amountUSD": 50, "toAddress": "0x..." }
 ```
 
-### 场景 2: Agent 推荐餐厅
+### Intent + Matching (Phase 2)
+
+```bash
+# 创建意图 (可选择接收广告让利)
+POST /api/v1/intent
+{ "userId": "user_123", "type": "transport", "intent": {...}, "preferences": { "wantAds": true } }
+
+# 注册 Agent
+POST /api/v1/agent/register
+{ "agentId": "driver_001", "capabilities": [{ "type": "transport", "acceptAds": true }] }
+
+# Agent 竞标
+POST /api/v1/agent/bid
+{ "agentId": "driver_001", "intentId": "...", "amount": 5, "discount": "20%" }
+
+# 获取让利 Offer
+GET /api/v1/intent/{id}/offers
+```
+
+### Trust (Phase 2.5)
+
+```bash
+# 创建托管 (付款后资金锁定)
+POST /api/v1/escrow
+{ "payerId": "user_123", "payeeId": "driver_001", "amountUSD": 30 }
+
+# 释放托管 (完成后)
+POST /api/v1/escrow/release
+{ "escrowId": "...", "release": true }
+
+# 发起争议
+POST /api/v1/escrow/dispute
+{ "escrowId": "...", "reason": "driver didn't arrive" }
+
+# 评分
+POST /api/v1/rating
+{ "raterId": "user_123", "targetId": "driver_001", "score": 5, "reason": "good_service" }
+
+# 缴纳保证金
+POST /api/v1/bond/deposit
+{ "agentId": "driver_001", "amountUSD": 500 }
+
+# 检查 Agent 可信度
+GET /api/v1/bond/{agentId}/trusted
+```
+
+### Yield (Phase 3)
+
+```bash
+# 创建收益账户
+POST /api/v1/yield
+{ "userId": "user_123", "riskLevel": "moderate" }
+
+# 存入代币
+POST /api/v1/yield/deposit
+{ "userId": "user_123", "token": "USDC", "chain": "ethereum", "amount": 1000 }
+
+# 预期收益
+GET /api/v1/yield/projections/{userId}?days=30
+
+# 推荐策略
+GET /api/v1/yield/strategy/{riskLevel}
+```
+
+---
+
+## 🏗️ 技术架构
 
 ```
-用户: "附近有什么好吃的？"
-
-Agent 分析用户口味 + 位置 →
-  搜索附近餐厅 →
-  餐厅付费让 Agent 推广 →
-  
-  // Agent 返回推荐
-  "推荐 A 餐厅，新用户 8 折，用我的链接"
-  "推荐 B 餐厅，米其林三星"
-  
-用户选择 A 餐厅 →
-  Agent 自动下单 →
-  餐厅给 Agent 返佣 →
-  Agent 把返佣让利给用户 →
-  用户省钱
+┌─────────────────────────────────────────────────────────────┐
+│                    Agent SDK / API                         │
+└─────────────────────┬───────────────────────────────────────┘
+                      │
+┌─────────────────────▼───────────────────────────────────────┐
+│                   API Gateway (Fastify)                    │
+│  /api/v1/exchange | /api/v1/payment | /api/v1/router    │
+│  /api/v1/intent   | /api/v1/escrow | /api/v1/yield      │
+└──────┬──────────────┬──────────────┬───────────────────────┘
+       │              │              │
+┌──────▼──────┐ ┌─────▼──────┐ ┌────▼────────┐
+│  Exchange   │ │   Router   │ │  Matching   │
+│   Client    │ │   Engine   │ │   Engine   │
+│ Binance/OKX │ │  多链路由  │ │ Intent/P2P │
+└──────┬──────┘ └──────┬─────┘ └─────┬──────┘
+       │               │             │
+┌──────▼───────────────▼─────────────▼──────────────────────┐
+│                    PostgreSQL (Prisma)                     │
+│  User | Exchange | Wallet | Payment | Intent | Escrow    │
+│  Reputation | Bond | YieldAccount | YieldHolding         │
+└────────────────────────────────────────────────────────────┘
 ```
 
-### 场景 3: Agent 理财 + 消费
+---
+
+## 🚀 快速开始
+
+```bash
+# 安装
+npm install
+
+# 数据库
+npx prisma generate
+npx prisma db push
+
+# 启动
+npm run dev
+
+# 测试
+curl http://localhost:3000/health
+```
+
+---
+
+## 📁 目录结构
 
 ```
-用户闲置 $1000 在账户
-  ↓
-Agent 自动存入 DeFi (5% APY)
-  ↓
-用户需要消费时
-  ↓
-Agent 一键取出，支付
-  ↓
-同时告诉用户:
-  "你本月消费 $500，
-   如果用 X 信用卡可返现 $25，
-   我帮你申请？"
-  ↓
-用户省钱，Agent 赚推荐费
+src/
+├── api/                    # API 路由
+│   ├── exchange.ts         # 交易所绑定 (Phase 1)
+│   ├── payment.ts          # 支付 (Phase 1)
+│   ├── wallet.ts           # 钱包 (Phase 1)
+│   ├── router.ts           # 路由 (Phase 1)
+│   ├── phase2-ads.ts      # Intent/Matching/Ads (Phase 2)
+│   ├── phase3-yield.ts    # DeFi 收益 (Phase 3)
+│   └── phase2-5.ts         # Escrow/Reputation/Bond (Phase 2.5)
+├── phase2/
+│   └── ads.ts             # 广告让利逻辑
+├── phase3/
+│   └── yield.ts            # 收益逻辑
+├── phase2-5/
+│   └── escrow.ts           # 托管+声誉逻辑
+├── exchange/               # 交易所客户端
+├── router/                 # 路由引擎
+├── utils/                  # 工具
+└── index.ts                # 入口
 ```
 
 ---
@@ -197,123 +292,27 @@ Agent:     抽 5% (广告收入已覆盖成本)
 
 ---
 
-## 🔌 API 概览
+## 🔐 信任机制
 
-### 交易所绑定
-
-```bash
-# 绑定交易所 (API Key)
-POST /api/v1/exchange/bind
-{
-  "userId": "user_123",
-  "exchange": "binance",
-  "apiKey": "xxx",
-  "apiSecret": "xxx"
-}
-```
-
-### 支付路由
-
-```bash
-# 获取最优路由
-POST /api/v1/router/routes
-{
-  "amountUSD": 50,
-  "fromChain": "solana",
-  "toChain": "ethereum"
-}
-```
-
-### 用户意图
-
-```bash
-# 创建意图
-POST /api/v1/intent
-{
-  "userId": "user_123",
-  "type": "transport",
-  "intent": {
-    "action": "ride",
-    "destination": { "lat": 40.7128, "lng": -74.0060 },
-    "budget": 30
-  }
-}
-```
-
-### Agent 广告 (Phase 2)
-
-```bash
-# 司机 Agent 竞标
-POST /api/v1/agent/bid
-{
-  "agentId": "driver_001",
-  "intentId": "intent_123",
-  "price": 25,        # 愿意支付的费用
-  "eta": 5            # 到达时间(分钟)
-}
-
-# 用户查看广告让利
-GET /api/v1/intent/{id}/offers
-{
-  "offers": [
-    {
-      "driver": "司机 A",
-      "price": 30,
-      "originalPrice": 40,
-      "discount": "25%",      // Agent 让利
-      "agentFee": 5,
-      "userPays": 25
-    }
-  ]
-}
-```
-
----
-
-## 🛠️ 快速开始
-
-```bash
-# 安装
-npm install
-
-# 数据库
-npx prisma generate
-npx prisma db push
-
-# 启动
-npm run dev
-
-# 测试
-curl http://localhost:3000/health
-curl http://localhost:3000/api/v1/router/chains
-```
-
----
-
-## 📁 目录结构
+### Escrow 托管
 
 ```
-src/
-├── api/              # API 路由
-│   ├── exchange.ts   # 交易所绑定
-│   ├── payment.ts    # 支付
-│   ├── wallet.ts     # 钱包
-│   ├── router.ts     # 路由
-│   └── phase2.ts     # Intent/Matching/Agent/Ad
-├── exchange/         # 交易所客户端
-├── router/           # 路由引擎
-├── phase2/           # Phase 2 匹配+广告系统
-├── utils/            # 工具
-└── index.ts          # 入口
+用户付款 → 资金锁定在合约 → 司机完成服务 → 用户确认 → 资金释放
+                                            ↓
+                                   有争议? → 仲裁
 ```
 
----
+### Reputation 声誉
 
-## 🔐 安全
+- 每次交易后双向评分
+- 0-100 分，不可篡改
+- 影响匹配优先级
 
-- API Key/Secret 使用 AES-256-GCM 加密存储
-- 用户可导出私钥自行托管
-- 支持 Key 导出后删除服务器存储
+### Bond 保证金
+
+- Agent 需缴纳保证金
+- 违规行为可冻结
+- 赔付用户损失
 
 ---
 
