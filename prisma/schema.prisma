@@ -1,0 +1,138 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 用户
+model User {
+  id            String    @id @default(uuid())
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  // 关联
+  exchanges    ExchangeBinding[]
+  wallets      Wallet[]
+  payments     Payment[]
+  intents      UserIntent[]
+
+  // 索引
+  @@index([createdAt])
+}
+
+// 交易所绑定
+model ExchangeBinding {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  exchange    String   // binance, okx, coinbase, bybit
+  authType    String   // oauth, api_key
+  
+  // 加密存储的凭证
+  credentials String   // 加密后的 JSON
+  
+  permissions String[] // ['spot', 'wallet', 'trade']
+  
+  createdAt   DateTime @default(now())
+  expiresAt   DateTime? // OAuth 时需要
+  updatedAt   DateTime @updatedAt
+
+  @@unique([userId, exchange])
+  @@index([userId])
+  @@index([exchange])
+}
+
+// 钱包/Key
+model Wallet {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  chain       String   // solana, ethereum, polygon, tron
+  address     String
+  
+  // Keystore 加密
+  keystore    String?  // 导用户自托管出的 keystore ()
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([userId, chain, address])
+  @@index([userId])
+  @@index([chain])
+}
+
+// 支付请求
+model Payment {
+  id            String    @id @default(uuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  amountUSD     Float     // USD 金额
+  token         String    // USDC, USDT
+  fromChain     String
+  toChain       String
+  toAddress     String    // 收款方地址
+  
+  status        String    // pending, processing, completed, failed
+  routeDetails  String?   // 路由详情 JSON
+  
+  txHash        String?   // 链上交易 hash
+  errorMessage  String?   // 失败原因
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  completedAt   DateTime?
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+// 支付路由缓存
+model PaymentRoute {
+  id            String   @id @default(uuid())
+  
+  fromChain     String
+  toChain       String
+  fromToken     String
+  toToken       String
+  
+  routeData     String   // 路由详情 JSON
+  
+  totalCostUSD  Float
+  totalTimeSec  Int
+  
+  expiresAt     DateTime // 缓存过期时间
+  
+  createdAt     DateTime @default(now())
+
+  @@unique([fromChain, toChain, fromToken, toToken])
+  @@index([fromChain, toChain])
+}
+
+// 用户意图 (Phase 2 预留)
+model UserIntent {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  type        String   // transport, food, shopping, service
+  intent      String   // JSON
+  
+  status      String   // pending, matching, matched, completed, cancelled
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  expiresAt   DateTime?
+
+  @@index([userId])
+  @@index([status])
+}
