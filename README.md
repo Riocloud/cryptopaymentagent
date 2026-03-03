@@ -39,6 +39,108 @@
 
 ---
 
+## 🤝 致：交易所合作伙伴
+
+### 为什么要与 CryptoPaymentAgent 合作？
+
+作为交易所，您可能面临以下挑战：
+
+| 挑战 | 传统方案 | 我们的方案 |
+|------|----------|------------|
+| **用户交易量** | 靠拉新，成本 $50/人 | Agent 自动交易，零获客成本 |
+| **资金留存** | 理财收益低，用户转走 | DeFi 收益 5-20%，资金留存 |
+| **活跃度** | 补贴刺激 | Agent 日常消费自动使用 |
+| **新用户** | 推广难 | Agent 帮用户一键开户 |
+
+### 合作模式
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                     交易所 (Exchange)                       │
+│                                                              │
+│   • 提供 API Key 绑定                                       │
+│   • 用户资产在您这里                                        │
+│   • 交易手续费收入                                          │
+└─────────────────────┬───────────────────────────────────────┘
+                      │
+                      ▼
+┌─────────────────────────────────────────────────────────────┐
+│                  CryptoPaymentAgent                         │
+│                                                              │
+│   • Agent 支付基础设施                                      │
+│   • 用户意图匹配                                            │
+│   • 托管+声誉系统                                          │
+│   • DeFi 收益优化                                          │
+└─────────────────────┬───────────────────────────────────────┘
+                      │
+                      ▼
+┌─────────────────────────────────────────────────────────────┐
+│                        用户                                  │
+│                                                              │
+│   • 扫码即用，无需注册                                       │
+│   • 消费省钱 20%                                           │
+│   • 闲置资金自动赚收益                                      │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### 您的收益
+
+| 收入来源 | 说明 | 预估 |
+|----------|------|------|
+| **交易手续费** | Agent 执行交易时产生 | +30% 交易量 |
+| **充值手续费** | 用户充值到平台 | +50% 充值 |
+| **API 调用费** | Agent 调用交易所 API | 按量收费 |
+| **新用户** | Agent 帮用户开户 | 零成本获客 |
+| **资金留存** | DeFi 收益高于银行 | 3x 留存率 |
+
+### 合作案例
+
+```
+案例 1: 打车场景
+├── 用户通过 Agent 打车 $50
+├── Agent 自动从交易所划转 USDT
+├── 交易所赚: $50 × 0.1% = $0.05 手续费
+├── 用户省: $10 (20%)
+└── 每天 100 万单 = $5 万/天手续费
+
+案例 2: 外卖场景  
+├── 用户通过 Agent 点外卖 $30
+├── Agent 自动扣款 + 跨链支付
+├── 交易所赚: 清算手续费
+└── 日均 500 万单 = $15 万/天
+
+案例 3: 理财场景
+├── 用户闲置 $1000 存入
+├── Agent 自动存入 DeFi (8% APY)
+├── 交易所提供: 流动性 pool
+├── 用户赚: $80/年 (vs 银行 $5)
+└── 交易所赚: 流动性 fee ~$20/年
+```
+
+---
+
+## 📈 市场规模
+
+### 万亿级市场机会
+
+| 领域 | 全球市场规模 | Agent 渗透后 |
+|------|-------------|--------------|
+| 网约车 | $3000 亿 | $600 亿 (20%) |
+| 外卖 | $1500 亿 | $300 亿 (20%) |
+| 电商 | $6 万亿 | $6000 亿 (10%) |
+| 支付 | $8 万亿 | $8000 亿 (10%) |
+| DeFi | $2000 亿 | $4000 亿 (200%) |
+
+### 我们的目标
+
+```
+2025: 1 万用户, $1000 万交易量
+2026: 100 万用户, $10 亿交易量  
+2027: 1 亿用户, $1000 亿交易量
+```
+
+---
+
 ## 🤖 为什么是 Agent 的时代？
 
 ### 1. Agent 是"无形的 App"
@@ -87,636 +189,177 @@ Agent 选最优 (便宜 + 好吃)
 
 这是基础设施，让 Agent 能真正完成加密支付。
 
-#### 1.1 交易所接入 (Exchange Client)
+| 模块 | 说明 |
+|------|------|
+| **交易所接入** | Binance/OKX/Coinbase API Key 绑定 |
+| **路由引擎** | 多链路由，最便宜/最快路径 |
+| **钱包管理** | 托管/自托管，Key 可导出 |
+| **支付执行** | 异步队列，真实链上交易 |
 
-用户不需要自己管理私钥，只需要绑定交易所账号：
-
-```typescript
-// 绑定 Binance
-POST /api/v1/exchange/bind
-{
-  "userId": "user_123",
-  "exchange": "binance", 
-  "apiKey": "xxx",
-  "apiSecret": "xxx"
-}
-
-// 绑定 OKX
-POST /api/v1/exchange/bind
-{
-  "userId": "user_123", 
-  "exchange": "okx",
-  "apiKey": "xxx",
-  "apiSecret": "xxx"
-}
-```
-
-**支持交易所**：
-- Binance（全球最大）
-- OKX（稳定可靠）
-- Coinbase（主流选择）
-- Bybit（新兴交易所）
-
-#### 1.2 路由引擎 (Router Engine)
-
-自动找到最便宜/最快的支付路径：
-
-```typescript
-// 查询最优路由
-POST /api/v1/router/routes
-{
-  "amountUSD": 50,
-  "fromChain": "solana",    // 用户资产在 Solana
-  "toChain": "ethereum",    // 收款方在 Ethereum
-  "urgency": "normal"       // normal/slow/fast
-}
-
-// 返回
-{
-  "routes": [{
-    "id": "bridge-solana-ethereum",
-    "estimatedCostUSD": 5.10,  // 总成本 $5.10
-    "estimatedTimeSeconds": 50, // 50秒
-    "recommended": true
-  }]
-}
-```
-
-**支持链**：
-| 链 | 特点 | 典型 Gas |
-|-----|------|----------|
-| Solana | 快、便宜 | ~$0.001 |
-| Ethereum | 主流 | ~$5 |
-| Arbitrum | L2，便宜 | ~$0.1 |
-| Base | Coinbase L2 | ~$0.05 |
-| Polygon | 便宜 | ~$0.01 |
-| Tron | 稳定币 | ~$0.1 |
-
-#### 1.3 钱包管理 (Wallet Manager)
-
-用户可以选择：
-- **托管模式**：由 Agent 代管资金
-- **自托管模式**：导出私钥，自己保管
-
-```typescript
-// 绑定已有钱包
-POST /api/v1/wallet
-{
-  "userId": "user_123",
-  "chain": "solana",
-  "address": "7xKXtg...",
-  "passphrase": "user_secret"
-}
-
-// 导出私钥（自托管）
-POST /api/v1/wallet/export
-{
-  "walletId": "wallet_xxx",
-  "passphrase": "user_secret"
-}
-// 返回私钥，Agent 不再存储
-```
-
-#### 1.4 支付执行 (Payment)
-
-```typescript
-// 发起支付
-POST /api/v1/payment
-{
-  "userId": "user_123",
-  "amountUSD": 50,
-  "fromChain": "solana",
-  "toChain": "ethereum", 
-  "toAddress": "0xabc..."
-}
-
-// 返回
-{
-  "id": "pay_xxx",
-  "status": "pending",
-  "amountUSD": 50,
-  "createdAt": "2024-01-01T00:00:00Z"
-}
-```
-
----
+**支持链**: Solana, Ethereum, Arbitrum, Base, Optimism, Polygon, Tron
 
 ### Phase 2: 匹配 + 广告让利 ✅
 
-这是核心商业模式：Agent 抽 5%，用户省 20%。
+核心商业模式：Agent 抽 5%，用户省 20%。
 
-#### 2.1 Intent System - 用户意图
-
-用户只需要表达"要做什么"，不需要知道怎么做：
-
-```typescript
-// 打车意图
-POST /api/v1/intent
-{
-  "userId": "user_123",
-  "type": "transport",
-  "intent": {
-    "action": "ride",
-    "destination": {
-      "lat": 40.7128,
-      "lng": -74.0060,
-      "address": "NYC Airport"
-    },
-    "budget": 40  // 预算 $40
-  },
-  "preferences": {
-    "wantAds": true,      // 愿意接收广告让利
-    "maxWaitMinutes": 10,
-    "maxGroupSize": 4
-  }
-}
-```
-
-#### 2.2 Agent Registry - Agent 注册
-
-服务提供者（司机/餐厅）注册为 Agent：
-
-```typescript
-// 注册司机 Agent
-POST /api/v1/agent/register
-{
-  "agentId": "driver_john_001",
-  "name": "John's Driver",
-  "capabilities": [{
-    "type": "transport",
-    "vehicleType": "car",
-    "location": {
-      "lat": 40.7128,
-      "lng": -74.0060,
-      "radius": 5000  // 5km 范围
-    },
-    "acceptAds": true,    // 愿意付广告费获取订单
-    "adBudget": 100       // 每日广告预算 $100
-  }],
-  "walletAddress": "0xabc...",
-  "apiEndpoint": "https://driver-agent.example.com/webhook"
-}
-```
-
-#### 2.3 广告竞标系统
-
-当用户愿意接收广告时，Agent 可以竞标：
-
-```typescript
-// 司机出价 $5 获取这个订单
-POST /api/v1/agent/bid
-{
-  "agentId": "driver_john_001",
-  "intentId": "intent_xxx",
-  "bidType": "driver_bid",
-  "amount": 5,           // 愿意付 $5
-  "originalPrice": 40,  // 原本收费 $40
-  "discount": "20%",     // 让利 20%
-  "eta": 5               // 5分钟到达
-}
-```
-
-#### 2.4 让利计算引擎
-
-**核心算法**：
-
-```
-传统 Uber: 抽 25% = $10
-Agent:     抽 5%  = $2
-用户省:    $8 (20%)
-```
-
-```typescript
-// 用户获取让利 Offer
-GET /api/v1/intent/{intentId}/offers
-
-// 返回
-{
-  "offers": [{
-    "agentId": "driver_john_001",
-    "originalPrice": 40,
-    "agentFee": 2,           // Agent 抽 $2 (5%)
-    "userDiscount": 8,       // 用户省 $8 (20%)
-    "userPays": 32,         // 用户付 $32
-    "discountPercent": "20%"
-  }],
-  "recommended": {
-    ...offer,
-    "message": "Best deal! You save $8.00 (20%)"
-  },
-  "summary": {
-    "traditionalPrice": "$40",
-    "agentFee": "$2 (5%)",
-    "userSavings": "$8 (20%)",
-    "youPay": "$32"
-  }
-}
-```
-
-#### 2.5 Group Settlement - 群组分摊
-
-多个同路用户可以拼单：
-
-```typescript
-// 创建拼车群组
-POST /api/v1/group
-{
-  "type": "transport",
-  "memberUserIds": ["user1", "user2", "user3"],
-  "intentIds": ["intent1", "intent2", "intent3"]
-}
-
-// 计算分摊（含广告让利）
-POST /api/v1/group/{groupId}/split
-{
-  "totalAmountUSD": 90,   // 总价 $90
-  "adsRevenue": 15        // 广告收入 $15
-}
-
-// 返回
-{
-  "split": {
-    "perUser": 25,         // 每人 $25
-    "agentFee": 4.5,       // Agent 抽 $4.5 (5%)
-    "userSavings": 5      // 每人省 $5
-  },
-  "breakdown": {
-    "traditionalPrice": "$90",
-    "userSavings": "$5.00 (from ads)",
-    "agentFee": "$4.50 (5%)",
-    "youPay": "$25.00 per user"
-  }
-}
-```
-
----
+| 模块 | 说明 |
+|------|------|
+| **Intent System** | 用户意图表达 |
+| **Agent Registry** | 服务 Agent 注册 |
+| **Matching Engine** | LBS 智能匹配 |
+| **Ad System** | 竞价排名，广告让利 |
+| **Group Settlement** | 拼单分摊 |
 
 ### Phase 2.5: 信任机制 ✅
 
-这是让 Agent 模式可行的关键。
+让 Agent 模式可行。
 
-#### 3.1 Escrow - 资金托管
-
-解决"司机不来了怎么办"和"用户不付钱怎么办"的问题：
-
-```
-用户付款 $30
-    ↓
-资金锁定在托管
-    ↓
-司机完成服务
-    ↓
-用户确认 → 资金释放给司机
-    ↓
-或 7 天超时 → 自动释放
-    ↓
-或 争议 → 仲裁
-```
-
-```typescript
-// 创建托管
-POST /api/v1/escrow
-{
-  "payerId": "user_123",      // 付款方
-  "payeeId": "driver_001",   // 收款方
-  "amountUSD": 30,
-  "token": "USDC",
-  "chain": "solana"
-}
-
-// 完成后释放
-POST /api/v1/escrow/release
-{
-  "escrowId": "escrow_xxx",
-  "release": true  // true = 给司机, false = 退款给用户
-}
-
-// 发起争议
-POST /api/v1/escrow/dispute
-{
-  "escrowId": "escrow_xxx",
-  "reason": "driver arrived 30 minutes late"
-}
-```
-
-#### 3.2 Reputation - 声誉系统
-
-链上记录每一次评分，不可篡改：
-
-```typescript
-// 交易后评分
-POST /api/v1/rating
-{
-  "raterType": "user",
-  "raterId": "user_123",
-  "targetType": "agent",
-  "targetId": "driver_001",
-  "score": 5,              // 1-5 分
-  "reason": "on_time",    // on_time / good_service / no_show / etc.
-  "comment": "Very good driver!"
-}
-
-// 获取声誉
-GET /api/v1/reputation/agent/driver_001
-
-// 返回
-{
-  "entityType": "agent",
-  "entityId": "driver_001",
-  "score": 85,              // 0-100 分
-  "totalRatings": 50,
-  "positiveRatings": 45,
-  "negativeRatings": 3,
-  "disputes": 2,
-  "level": "⭐⭐⭐⭐ 非常可信"
-}
-```
-
-**声誉计算**：
-```
-score = (positive - negative) / total * 50 + 50
-       = (45 - 3) / 50 * 50 + 50
-       = 42 + 50 = 92
-```
-
-#### 3.3 Bond - 保证金
-
-Agent 需要缴纳保证金，违规会冻结：
-
-```typescript
-// 缴纳保证金
-POST /api/v1/bond/deposit
-{
-  "agentId": "driver_001",
-  "amountUSD": 500
-}
-
-// 检查是否可信
-GET /api/v1/bond/driver_001/trusted?minBond=100&minReputation=30
-
-// 返回
-{
-  "agentId": "driver_001",
-  "trusted": true,
-  "requirements": {
-    "minBond": 100,
-    "minReputation": 30
-  }
-}
-```
-
-**信任机制流程**：
-```
-用户发起 Intent
-    ↓
-匹配可信 Agent (保证金 ≥ $100, 声誉 ≥ 30)
-    ↓
-创建托管 (资金锁定)
-    ↓
-Agent 完成服务
-    ↓
-用户确认/超时 → 资金释放
-    ↓
-双方评分 → 声誉更新
-```
-
----
+| 模块 | 说明 |
+|------|------|
+| **Escrow** | 资金托管，完成后释放 |
+| **Reputation** | 链上声誉，0-100 分 |
+| **Bond** | Agent 保证金，违规冻结 |
+| **Arbitration** | 争议仲裁 |
 
 ### Phase 3: DeFi 收益 ✅
 
-让用户的闲置资金自动生利：
+闲置资金自动生利。
 
-#### 3.1 Yield Account - 收益账户
-
-```typescript
-// 创建收益账户
-POST /api/v1/yield
-{
-  "userId": "user_123",
-  "riskLevel": "moderate",  // conservative / moderate / aggressive
-  "autoCompound": true      // 自动复投
-}
-```
-
-#### 3.2 存入代币
-
-```typescript
-// 存入 USDC 赚收益
-POST /api/v1/yield/deposit
-{
-  "userId": "user_123",
-  "token": "USDC",
-  "chain": "ethereum",
-  "amount": 1000
-}
-
-// 返回
-{
-  "success": true,
-  "holding": {
-    "token": "USDC",
-    "chain": "ethereum",
-    "amount": 1000,
-    "protocol": "uniswap-arb-usdceth",
-    "apy": 0.20  // 20% APY
-  },
-  "message": "Deposited 1000 USDC at 20.0% APY"
-}
-```
-
-#### 3.3 预期收益
-
-```typescript
-// 计算 30 天预期收益
-GET /api/v1/yield/projections/user_123?days=30
-
-// 返回
-{
-  "totalValueUSD": 1000,
-  "projectedYield": 16.44,     // 30 天收益 $16.44
-  "apy": 0.20,                 // 年化 20%
-  "dailyYield": 0.55,         // 每天 $0.55
-  "summary": {
-    "currentBalance": "$1000.00",
-    "projectedEarnings": "$16.44",
-    "effectiveAPY": "20.0%"
-  }
-}
-```
-
-#### 3.4 推荐策略
-
-```typescript
-// 获取推荐配置
-GET /api/v1/yield/strategy/moderate
-
-// 返回
-{
-  "riskLevel": "moderate",
-  "allocations": [
-    { "token": "USDC", "chain": "ethereum", "percent": 30 },
-    { "token": "USDC", "chain": "arbitrum", "percent": 30 },
-    { "token": "USDC", "chain": "solana", "percent": 25 },
-    { "token": "USDT", "chain": "solana", "percent": 15 }
-  ]
-}
-```
+| 模块 | 说明 |
+|------|------|
+| **Yield Account** | 收益账户 |
+| **Strategy** | 智能分配 |
+| **Auto-Compound** | 自动复投 |
+| **Projections** | 收益计算 |
 
 ---
 
-## 🏗️ 技术架构
+## 🌎 使用场景 (共 30+ 种)
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                      用户端 (User)                          │
-│                                                              │
-│   用户表达意图: "我要打车去机场"                              │
-│   ↓                                                         │
-│   Agent SDK                                                 │
-└─────────────────────┬───────────────────────────────────────┘
-                      │
-                      ▼
-┌─────────────────────────────────────────────────────────────┐
-│                    API Gateway (Fastify)                   │
-│                                                              │
-│   Phase 1: /exchange, /payment, /wallet, /router          │
-│   Phase 2: /intent, /agent, /group, /ads                   │
-│   Phase 2.5: /escrow, /reputation, /bond                   │
-│   Phase 3: /yield                                           │
-└──────┬──────────────┬──────────────┬───────────────────────┘
-       │              │              │
-       ▼              ▼              ▼
-┌─────────────────────────────────────────────────────────────┐
-│                      业务逻辑层                             │
-│                                                              │
-│   ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │
-│   │   Router    │  │  Matching   │  │   Escrow   │        │
-│   │   Engine    │  │   Engine    │  │   Manager  │        │
-│   └─────────────┘  └─────────────┘  └─────────────┘        │
-│                                                              │
-│   ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │
-│   │    Ads      │  │ Reputation  │  │    Yield    │        │
-│   │   Engine   │  │   System    │  │   Engine    │        │
-│   └─────────────┘  └─────────────┘  └─────────────┘        │
-└──────┬──────────────┬──────────────┬───────────────────────┘
-       │              │              │
-       ▼              ▼              ▼
-┌─────────────────────────────────────────────────────────────┐
-│                    PostgreSQL (Prisma)                     │
-│                                                              │
-│   User │ Exchange │ Wallet │ Payment │ Intent              │
-│   Escrow │ Reputation │ Bond │ YieldAccount │ YieldHolding │
-└─────────────────────────────────────────────────────────────┘
-```
+### 🚗 交通出行
 
-### 技术栈
+| 场景 | 传统痛点 | Agent 优势 |
+|------|----------|------------|
+| 打车 | Uber 抽 25% | 抽 5%，省 20% |
+| 拼车 | 凑人难 | Agent 自动组群 |
+| 长途客运 | 票价固定 | 竞价匹配 |
+| 租车 | 平台抽 20% | 竞价更低 |
+| 共享单车 | 充值门槛 | 按次付费 |
+| 停车 | 找位难 | 预约+竞价 |
+| 高速 | 排队拥堵 | ETC+Agent 付费 |
+| 航空 | 机票贵 | 竞价抢票 |
 
-- **Runtime**: Node.js 20+
-- **API**: Fastify (高性能)
-- **DB**: PostgreSQL + Prisma
-- **加密**: AES-256-GCM
-- **类型**: TypeScript (全栈)
+### 🍜 餐饮外卖
 
----
+| 场景 | 传统痛点 | Agent 优势 |
+|------|----------|------------|
+| 外卖 | 平台抽 20-30% | 拼单均摊 |
+| 堂食 | 买单慢 | Agent 预约+支付 |
+| 团餐 | 组织难 | Agent 自动凑单 |
+| 夜宵 | 选择困难 | Agent 推荐+优惠 |
+| 下午茶 | 点单麻烦 | Agent 自动下单 |
 
-## 🚀 快速开始
+### 🏨 旅行住宿
 
-### 1. 安装
+| 场景 | 传统痛点 | Agent 优势 |
+|------|----------|------------|
+| 酒店 | Booking 抽 15% | 团购价省 20% |
+| 民宿 | 清洁费贵 | 竞价匹配 |
+| 机票 | 价格不透明 | 多平台比价 |
+| 景点 | 门票贵 | 团购价 |
+| 导游 | 定价乱 | 竞价透明 |
+| 租车 | 保险坑 | 竞价+比价 |
 
-```bash
-git clone https://github.com/Riocloud/cryptopaymentagent.git
-cd cryptopaymentagent
-npm install
-```
+### 🏠 生活服务
 
-### 2. 配置
+| 场景 | 传统痛点 | Agent 优势 |
+|------|----------|------------|
+| 家政 | 中介抽 20% | 直接匹配 |
+| 维修 | 定价不透明 | 竞价抢单 |
+| 保洁 | 预约难 | 实时匹配 |
+| 洗衣 | 送取麻烦 | 上门服务 |
+| 美容 | 推销多 | 评分透明 |
+| 摄影 | 价格乱 | 竞价透明 |
 
-```bash
-cp .env.example .env
-```
+### 🛒 电商二手
 
-编辑 `.env`:
-```env
-DATABASE_URL="postgresql://user:password@localhost:5432/crypto?schema=public"
-PORT=3000
-HOST=0.0.0.0
-SYSTEM_PASSPHRASE="your-secret-passphrase"
-```
+| 场景 | 传统痛点 | Agent 优势 |
+|------|----------|------------|
+| 二手交易 | 闲鱼抽 10% | 托管+低费 |
+| 代购 | 资金风险 | 托管保障 |
+| 海淘 | 关税坑 | Agent 代办 |
+| 团购 | 凑人难 | 自动成团 |
+| 闪购 | 运费贵 | 拼单均摊 |
 
-### 3. 数据库
+### 📚 知识付费
 
-```bash
-# 开发用 SQLite (自动创建)
-npx prisma generate
-npx prisma db push
+| 场景 | 传统痛点 | Agent 优势 |
+|------|----------|------------|
+| 家教 | 找老师难 | 匹配快 |
+| 咨询 | 收费乱 | 竞价透明 |
+| 培训 | 课程贵 | 团购价 |
+| 陪练 | 约时间难 | 智能排期 |
+| 翻译 | 定价乱 | 竞价抢单 |
 
-# 生产用 PostgreSQL
-# 修改 prisma/schema.prisma 的 provider
-```
+### 🏥 医疗健康
 
-### 4. 启动
+| 场景 | 传统痛点 | Agent 优势 |
+|------|----------|------------|
+| 挂号 | 预约难 | 实时匹配 |
+| 问诊 | 收费高 | 竞价透明 |
+| 体检 | 套餐贵 | 团购价 |
+| 齿科 | 治疗贵 | 竞价匹配 |
+| 医美 | 定价乱 | 评价透明 |
 
-```bash
-# 开发模式 (热重载)
-npm run dev
+### 🐕 宠物服务
 
-# 生产构建
-npm run build
-npm start
-```
+| 场景 | 传统痛点 | Agent 优势 |
+|------|----------|------------|
+| 寄养 | 信任问题 | 托管+评分 |
+| 遛狗 | 预约难 | 实时匹配 |
+| 美容 | 定价乱 | 竞价透明 |
+| 医疗 | 收费高 | 竞价匹配 |
+| 训练 | 效果难评估 | 评分透明 |
 
-### 5. 测试
+### 💼 商务服务
 
-```bash
-# 健康检查
-curl http://localhost:3000/health
+| 场景 | 传统痛点 | Agent 优势 |
+|------|----------|------------|
+| 会计 | 收费高 | 竞价透明 |
+| 律师 | 咨询费贵 | 竞价匹配 |
+| 设计 | 改稿麻烦 | 托管+评分 |
+| 开发 | 定价乱 | 竞价抢单 |
+| 咨询 | 质量难评估 | 声誉透明 |
 
-# 获取支持的链
-curl http://localhost:3000/api/v1/router/chains
+### 🎮 娱乐休闲
 
-# 创建收益账户
-curl -X POST http://localhost:3000/api/v1/yield \
-  -H "Content-Type: application/json" \
-  -d '{"userId":"test","riskLevel":"moderate"}'
-```
+| 场景 | 传统痛点 | Agent 优势 |
+|------|----------|------------|
+| KTV | 团购贵 | 实时比价 |
+| 影院 | 票价不统一 | 最低价 |
+| 剧本杀 | 组局难 | 自动拼场 |
+| 健身 | 推销多 | 按次付费 |
+| 游泳 | 办卡坑 | 计时付费 |
 
----
+### 🏢 企业服务
 
-## 📁 目录结构
+| 场景 | 传统痛点 | Agent 优势 |
+|------|----------|------------|
+| 团建 | 组织难 | Agent 策划 |
+| 采购 | 流程长 | 竞价匹配 |
+| 招聘 | 收费高 | 匹配精准 |
+| 法务 | 响应慢 | 实时咨询 |
+| 财税 | 报错多 | 智能审核 |
 
-```
-cryptopaymentagent/
-├── prisma/
-│   └── schema.prisma       # 数据库模型
-├── src/
-│   ├── api/                # API 路由
-│   │   ├── exchange.ts     # 交易所绑定
-│   │   ├── payment.ts      # 支付
-│   │   ├── wallet.ts       # 钱包
-│   │   ├── router.ts       # 路由
-│   │   ├── phase2-ads.ts  # Intent/Matching/Ads
-│   │   ├── phase2-5.ts    # Escrow/Reputation/Bond
-│   │   └── phase3-yield.ts # DeFi 收益
-│   ├── phase2/
-│   │   └── ads.ts          # 广告让利逻辑
-│   ├── phase2-5/
-│   │   └── escrow.ts        # 托管+声誉逻辑
-│   ├── phase3/
-│   │   └── yield.ts         # 收益逻辑
-│   ├── exchange/            # 交易所客户端
-│   │   └── binance.ts
-│   ├── router/              # 路由引擎
-│   │   └── engine.ts
-│   ├── utils/              # 工具
-│   │   └── crypto.ts       # AES-256-GCM 加密
-│   ├── db/
-│   │   └── prisma.ts       # Prisma 客户端单例
-│   └── index.ts            # 入口
-├── .env.example
-├── package.json
-├── tsconfig.json
-└── README.md
-```
+### 💰 金融理财
+
+| 场景 | 传统痛点 | Agent 优势 |
+|------|----------|------------|
+| 理财 | 收益低 | DeFi 5-20% |
+| 借贷 | 审批慢 | 实时授信 |
+| 保险 | 条款复杂 | 智能推荐 |
+| 兑汇 | 差价大 | 实时最优价 |
+| 投资 | 门槛高 | 智能组合 |
 
 ---
 
@@ -737,7 +380,8 @@ cryptopaymentagent/
 |------|----------|-------------|--------|
 | 打车 | $40 | $2 | $8 (20%) |
 | 外卖 | $30 | $1.5 | $6 (20%) |
-| 购物 | $100 | $5 | $20 (20%) |
+| 酒店 | $200 | $10 | $40 (20%) |
+| 家政 | $100 | $5 | $20 (20%) |
 
 ### 平台收益
 
@@ -750,581 +394,137 @@ Agent 成本 $2 (广告费)
   ↓
 Agent 净赚 $28
   ↓
-每天 100 单 = $2800
+每天 100 万单 = $2800 万
   ↓
-每月 = $84,000
+每月 = $8.4 亿
 ```
 
-### 冷启动策略
-
-1. **补贴司机**：早期给司机保底收入
-2. **零抽成**：早期不收交易费，靠融资
-3. **邀请奖励**：拉新送积分
-4. **生态合作**：与现有车队/代理商合作
-
----
-
-## 🔐 安全机制
-
-### 1. 密钥安全
-
-- API Key/Secret 使用 **AES-256-GCM** 加密存储
-- 用户可导出私钥自行托管
-- 导出后服务器删除
-
-### 2. 资金安全
-
-- **托管模式**：资金锁定，完成后释放
-- **争议仲裁**：7天超时 + 人工仲裁
-- **保证金**：Agent 需缴纳保证金
-
-### 3. 隐私安全
-
-- 用户数据加密存储
-- 不收集不必要的个人信息
-- 支持匿名交易
-
----
-
-## 🌍 使用场景举例
-
-### 场景 1: 早上通勤拼车
+### 交易所收益
 
 ```
-用户 A: "我要从三里屯去国贸"
-用户 B: "我要从三里屯去国贸" 
-用户 C: "我要从三里屯去国贸"
-
-Agent 收到请求
-  ↓
-检测到 3 人同路
-  ↓
-创建拼车群组
-  ↓
-发布广告，附近 5 个司机竞标
-  ↓
-选择最优司机 (快 + 便宜 + 高评分)
-  ↓
-创建托管，锁定资金
-  ↓
-司机接单 → 送达 → 用户确认
-  ↓
-资金释放给司机，Agent 评分
-  ↓
-用户实付: $25 (省 $15，传统要 $40)
-Agent 赚: $2 (5%)
-用户省: $13 (33%)
-```
-
-### 场景 2: 午餐拼单
-
-```
-办公室 10 人想吃同一家餐厅
-  ↓
-Agent 汇总订单
-  ↓
-达到起送量，争取更低价格
-  ↓
-餐厅竞价，想被推荐
-  ↓
-Agent 选择: 折扣最大 + 口味最好
-  ↓
-用户享 8 折，Agent 赚返佣
-```
-
-### 场景 3: Agent 理财
-
-```
-用户闲置 $1000 在账户
-  ↓
-Agent 自动存入 DeFi (5% APY)
-  ↓
-每月收益 ~$4
-  ↓
-用户需要消费时
-  ↓
-Agent 一键取出支付
-  ↓
-同时提醒: "用XX卡可返现 $5"
+案例: 打车场景
+├── 用户通过 Agent 打车 $50
+├── Agent 从交易所账户扣款
+├── 交易所赚:
+│   ├── 划转手续费: $0.05
+│   ├── 跨链桥费: $0.10  
+│   └── 资金留存 DeFi: $0.20
+├── 日均 100 万单
+└── 月收益: $100 万
 ```
 
 ---
 
-### 场景 4: 旅行团订酒店
+## 🔐 信任机制
+
+### Escrow 托管
 
 ```
-用户 A: "我要去东京，下周"
-用户 B: "我要去东京，下周"
-用户 C: "我要去东京，下周"
-
-Agent 收到请求
-  ↓
-搜索附近酒店，5 家报价
-  ↓
-酒店竞价 (想让 Agent 推荐)
-  ↓
-Agent 选择: 价格最低 + 评分最高
-  ↓
-用户享团购价，Agent 赚佣金
-  ↓
-Agent 帮订房，支付 crypto
+用户付款 $30
+    ↓
+资金锁定在托管
+    ↓
+司机完成服务
+    ↓
+用户确认 → 资金释放给司机
+    ↓
+或 7 天超时 → 自动释放
+    ↓
+或 争议 → 仲裁
 ```
 
-**对比传统**：
-| 方式 | 价格 | 佣金 |
-|------|------|------|
-| Booking.com | $200/晚 | $30 (15%) |
-| Agent | $160/晚 | $10 (5%) |
-| 用户省 | $40 (20%) | |
+### Reputation 声誉
+
+- 每次交易后双向评分
+- 0-100 分，不可篡改
+- 影响匹配优先级
+
+### Bond 保证金
+
+- Agent 需缴纳保证金
+- 违规行为可冻结
+- 赔付用户损失
 
 ---
 
-### 场景 5: 家政服务
+## 🏗️ 技术架构
 
 ```
-用户: "请个小时工打扫卫生"
-  ↓
-Agent 搜索附近 Available 的家政 Agent
-  ↓
-家政 Agent 竞标 (价格 + 评分)
-  ↓
-Agent 匹配最优家政
-  ↓
-创建托管，锁定资金
-  ↓
-服务完成，用户确认
-  ↓
-资金释放，Agent 评分
+┌─────────────────────────────────────────────────────────────┐
+│                    API Gateway (Fastify)                   │
+│  /exchange | /payment | /wallet | /router | /intent    │
+│  /escrow | /reputation | /bond | /yield                 │
+└──────┬──────────────┬──────────────┬───────────────────────┘
+       │              │              │
+       ▼              ▼              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                      业务逻辑层                           │
+│  Router Engine | Matching Engine | Escrow Manager        │
+│  Ads Engine | Reputation System | Yield Engine            │
+└──────┬──────────────┬──────────────┬───────────────────────┘
+       │              │              │
+       ▼              ▼              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                   PostgreSQL (Prisma)                    │
+└─────────────────────────────────────────────────────────────┘
 ```
 
-**优势**：
-- 无平台抽成 (传统 20-30%)
-- 双方直接匹配
-- 争议有托管保障
+### 技术栈
+
+- **Runtime**: Node.js 20+
+- **API**: Fastify (高性能)
+- **DB**: PostgreSQL + Prisma
+- **加密**: AES-256-GCM
+- **类型**: TypeScript
 
 ---
 
-### 场景 6: 二手交易
-
-```
-用户 A: "我要卖一台 iPhone 15"
-用户 B: "我要买一台 iPhone 15"
-
-Agent 匹配买卖双方
-  ↓
-验证商品 (可接入验机服务)
-  ↓
-创建托管: 买家付款锁定
-  ↓
-卖家发货 → 买家确认收货
-  ↓
-资金释放给卖家
-  ↓
-Agent 赚服务费 (1-2%)
-```
-
-**对比闲鱼**：
-- 无平台抽成 10%
-- 托管保障资金安全
-- 争议有仲裁
-
----
-
-### 场景 7: 知识付费
-
-```
-用户: "我想学 Python"
-  ↓
-Agent 搜索附近 Available 的 Python 老师
-  ↓
-老师竞标 (价格 + 评分 + 擅长领域)
-  ↓
-匹配成功
-  ↓
-课程费用托管
-  ↓
-上课完成，确认收货
-  ↓
-资金释放，评价老师
-```
-
----
-
-### 场景 8: 宠物寄养
-
-```
-用户: "我要出差一周，想找寄养"
-  ↓
-Agent 搜索附近 Available 的宠物寄养 Agent
-  ↓
-寄养 Agent 竞标 (价格 + 评价 + 资质)
-  ↓
-匹配成功
-  ↓
-托管预付款 (50%)
-  ↓
-寄养完成，用户确认
-  ↓
-尾款释放，评价
-```
-
----
-
-### 场景 9: 租车服务
-
-```
-用户: "我要租一辆车去自驾游"
-  ↓
-Agent 搜索附近租车公司 Agent
-  ↓
-租车公司竞价
-  ↓
-Agent 选择: 价格最低 + 车况最好
-  ↓
-创建托管: 租金 + 押金锁定
-  ↓
-还车确认，无损 → 押金释放
-  ↓
-Agent 赚服务费
-```
-
----
-
-### 场景 10: 医疗预约
-
-```
-用户: "我想看牙医"
-  ↓
-Agent 搜索附近牙科诊所 Agent
-  ↓
-诊所竞价 (价格 + 评分 + 预约时间)
-  ↓
-匹配成功
-  ↓
-预约费用托管
-  ↓
-就诊完成，确认
-  ↓
-资金释放
-```
-
----
-
-### 场景 11: 法律咨询
-
-```
-用户: "我想咨询离婚法律"
-  ↓
-Agent 搜索律师 Agent
-  ↓
-律师竞标 (价格 + 经验 + 评分)
-  ↓
-匹配成功
-  ↓
-咨询费托管
-  ↓
-咨询完成，确认
-  ↓
-资金释放
-```
-
----
-
-### 场景 12: 代购服务
-
-```
-用户: "帮我从日本代购一个包"
-  ↓
-Agent 搜索代购 Agent
-  ↓
-代购 Agent 报价 (商品 + 运费 + 代购费)
-  ↓
-用户确认
-  ↓
-创建托管: 70% 预付款
-  ↓
-代购发货，用户确认收货
-  ↓
-尾款释放
-```
-
----
-
-## 🌎 使用场景 (共 12 种)
-
-| 场景 | 传统痛点 | Agent 优势 |
-|------|----------|------------|
-| 打车 | Uber 抽 25% | 抽 5%，省 20% |
-| 外卖 | 平台抽 20% | 拼单均摊，省更多 |
-| 理财 | 银行利息低 | DeFi 5-20% APY |
-| 订酒店 | Booking 抽 15% | 团购价，省 20% |
-| 家政 | 中介抽 20% | 直接匹配 |
-| 二手交易 | 闲鱼抽 10% | 托管+低费 |
-| 知识付费 | 平台抽 30% | 直接对接 |
-| 宠物寄养 | 信任问题 | 托管+评分 |
-| 租车 | 平台抽 20% | 竞价更低 |
-| 医疗 | 预约难 | 匹配快 |
-| 法律咨询 | 收费不透明 | 竞价透明 |
-| 代购 | 资金风险 | 托管保障 |
-
-### 场景 1: 早上通勤拼车
-
-```
-用户 A: "我要从三里屯去国贸"
-用户 B: "我要从三里屯去国贸" 
-用户 C: "我要从三里屯去国贸"
-
-Agent 收到请求
-  ↓
-检测到 3 人同路
-  ↓
-创建拼车群组
-  ↓
-发布广告，附近 5 个司机竞标
-  ↓
-选择最优司机 (快 + 便宜 + 高评分)
-  ↓
-创建托管，锁定资金
-  ↓
-司机接单 → 送达 → 用户确认
-  ↓
-资金释放给司机，Agent 评分
-  ↓
-用户实付: $25 (省 $15，传统要 $40)
-Agent 赚: $2 (5%)
-用户省: $13 (33%)
-```
-
-### 场景 2: 午餐拼单
-
-```
-办公室 10 人想吃: 午餐拼同一家餐厅
-  ↓
-Agent 汇总订单
-  ↓
-达到起送量，争取更低价格
-  ↓
-餐厅竞价，想被推荐
-  ↓
-Agent 选择: 折扣最大 + 口味最好
-  ↓
-用户享 8 折，Agent 赚返佣
-```
-
-### 场景 3: Agent 理财
-
-```
-用户闲置 $1000 在账户
-  ↓
-Agent 自动存入 DeFi (5% APY)
-  ↓
-每月收益 ~$4
-  ↓
-用户需要消费时
-  ↓
-Agent 一键取出支付
-  ↓
-同时提醒: "用XX卡可返现 $5"
-```
-
-### 场景 4: 旅行团订酒店
-
-```
-用户 A: "我要去东京，下周"
-用户 B: "我要去东京，下周"
-用户 C: "我要去东京，下周"
-
-Agent 收到请求
-  ↓
-搜索附近酒店，5 家报价
-  ↓
-酒店竞价 (想让 Agent 推荐)
-  ↓
-Agent 选择: 价格最低 + 评分最高
-  ↓
-用户享团购价，Agent 赚佣金
-  ↓
-Agent 帮订房，支付 crypto
-```
-
-**对比传统**：
-| 方式 | 价格 | 佣金 |
-|------|------|------|
-| Booking.com | $200/晚 | $30 (15%) |
-| Agent | $160/晚 | $10 (5%) |
-| 用户省 | $40 (20%) | |
-
-### 场景 5: 家政服务
-
-```
-用户: "请个小时工打扫卫生"
-  ↓
-Agent 搜索附近 Available 的家政 Agent
-  ↓
-家政 Agent 竞标 (价格 + 评分)
-  ↓
-Agent 匹配最优家政
-  ↓
-创建托管，锁定资金
-  ↓
-服务完成，用户确认
-  ↓
-资金释放，Agent 评分
-```
-
-**优势**：
-- 无平台抽成 (传统 20-30%)
-- 双方直接匹配
-- 争议有托管保障
-
-### 场景 6: 二手交易
-
-```
-用户 A: "我要卖一台 iPhone 15"
-用户 B: "我要买一台 iPhone 15"
-
-Agent 匹配买卖双方
-  ↓
-验证商品 (可接入验机服务)
-  ↓
-创建托管: 买家付款锁定
-  ↓
-卖家发货 → 买家确认收货
-  ↓
-资金释放给卖家
-  ↓
-Agent 赚服务费 (1-2%)
-```
-
-**对比闲鱼**：
-- 无平台抽成 10%
-- 托管保障资金安全
-- 争议有仲裁
-
-### 场景 7: 知识付费
-
-```
-用户: "我想学 Python"
-  ↓
-Agent 搜索附近 Available 的 Python 老师
-  ↓
-老师竞标 (价格 + 评分 + 擅长领域)
-  ↓
-匹配成功
-  ↓
-课程费用托管
-  ↓
-上课完成，确认收货
-  ↓
-资金释放，评价老师
-```
-
-### 场景 8: 宠物寄养
-
-```
-用户: "我要出差一周，想找寄养"
-  ↓
-Agent 搜索附近 Available 的宠物寄养 Agent
-  ↓
-寄养 Agent 竞标 (价格 + 评价 + 资质)
-  ↓
-匹配成功
-  ↓
-托管预付款 (50%)
-  ↓
-寄养完成，用户确认
-  ↓
-尾款释放，评价
-```
-
-### 场景 9: 租车服务
-
-```
-用户: "我要租一辆车去自驾游"
-  ↓
-Agent 搜索附近租车公司 Agent
-  ↓
-租车公司竞价
-  ↓
-Agent 选择: 价格最低 + 车况最好
-  ↓
-创建托管: 租金 + 押金锁定
-  ↓
-还车确认，无损 → 押金释放
-  ↓
-Agent 赚服务费
-```
-
-### 场景 10: 医疗预约
-
-```
-用户: "我想看牙医"
-  ↓
-Agent 搜索附近牙科诊所 Agent
-  ↓
-诊所竞价 (价格 + 评分 + 预约时间)
-  ↓
-匹配成功
-  ↓
-预约费用托管
-  ↓
-就诊完成，确认
-  ↓
-资金释放
-```
-
-### 场景 11: 法律咨询
-
-```
-用户: "我想咨询离婚法律"
-  ↓
-Agent 搜索律师 Agent
-  ↓
-律师竞标 (价格 + 经验 + 评分)
-  ↓
-匹配成功
-  ↓
-咨询费托管
-  ↓
-咨询完成，确认
-  ↓
-资金释放
-```
-
-### 场景 12: 代购服务
-
-```
-用户: "帮我从日本代购一个包"
-  ↓
-Agent 搜索代购 Agent
-  ↓
-代购 Agent 报价 (商品 + 运费 + 代购费)
-  ↓
-用户确认
-  ↓
-创建托管: 70% 预付款
-  ↓
-代购发货，用户确认收货
-  ↓
-尾款释放
-```
-
----
-
-## 🤝 参与贡献
-
-欢迎提交 Issue 和 PR！
+## 🚀 快速开始
 
 ```bash
-# 开发
+# 安装
+git clone https://github.com/Riocloud/cryptopaymentagent.git
+cd cryptopaymentagent
+npm install
+
+# 配置
+cp .env.example .env
+
+# 数据库
+npx prisma generate
+npx prisma db push
+
+# 启动
 npm run dev
-
-# 测试
-npm test
-
-# 构建
-npm run build
 ```
+
+---
+
+## 📞 合作联系
+
+### 交易所合作
+
+我们正在寻找以下合作伙伴：
+
+- **CEX**: Binance, OKX, Coinbase, Bybit...
+- **DeFi**: Aave, Compound, Uniswap...
+- **支付**: Stripe, 支付宝, 微信支付...
+- **钱包**: MetaMask, Phantom, Backpack...
+
+### 合作形式
+
+| 形式 | 说明 |
+|------|------|
+| **API 接入** | 交易所接入支付网络 |
+| **流动性提供** | DeFi 协议提供收益 |
+| **技术合作** | 联合开发新功能 |
+| **投资** | 种子轮/A 轮融资 |
+
+### 联系我们
+
+- **GitHub**: https://github.com/Riocloud/cryptopaymentagent
+- **Email**: partnership@riocloud.com
+- **Telegram**: @riocloud
 
 ---
 
@@ -1333,10 +533,3 @@ npm run build
 BSD 3-Clause License
 
 Copyright (c) 2024 Riocloud
-
----
-
-## 📞 联系
-
-- GitHub: https://github.com/Riocloud/cryptopaymentagent
-- Email: dev@riocloud.com
