@@ -167,3 +167,61 @@ model AgentBid {
   @@index([intentId])
   @@index([status])
 }
+
+// Phase 3: 收益账户 (Yield)
+model YieldAccount {
+  id            String   @id @default(uuid())
+  userId        String   @unique
+  
+  // 风险级别
+  riskLevel     String   // conservative, moderate, aggressive
+  
+  // 自动复投
+  autoCompound  Boolean  @default(false)
+  
+  // 总资产 USD
+  totalValueUSD Float    @default(0)
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  // 关联
+  holdings      YieldHolding[]
+  records       YieldRecord[]
+}
+
+// 持仓
+model YieldHolding {
+  id            String   @id @default(uuid())
+  accountId     String
+  account       YieldAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  
+  token         String   // USDC, USDT, etc
+  chain         String   // solana, ethereum, etc
+  amount        Float
+  
+  protocol      String   // aave, raydium, etc
+  apy           Float    // 当前 APY
+  
+  valueUSD      Float    @default(0)
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@index([accountId])
+  @@index([token])
+}
+
+// 收益历史
+model YieldRecord {
+  id            String   @id @default(uuid())
+  accountId     String
+  account       YieldAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  
+  amountUSD     Float
+  source        String   // interest, reward, arbitrage
+  
+  createdAt     DateTime @default(now())
+  
+  @@index([accountId])
+}

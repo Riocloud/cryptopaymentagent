@@ -4,6 +4,7 @@ import { paymentRoutes } from './api/payment';
 import { walletRoutes } from './api/wallet';
 import { routerRoutes } from './api/router';
 import { intentRoutes, agentRoutes, groupRoutes } from './api/phase2-ads';
+import { yieldRoutes } from './api/phase3-yield';
 
 // 注册路由
 fastify.register(exchangeRoutes, { prefix: '/api/v1' });
@@ -15,6 +16,9 @@ fastify.register(routerRoutes, { prefix: '/api/v1' });
 fastify.register(intentRoutes, { prefix: '/api/v1' });
 fastify.register(agentRoutes, { prefix: '/api/v1' });
 fastify.register(groupRoutes, { prefix: '/api/v1' });
+
+// Phase 3: Yield (DeFi 收益)
+fastify.register(yieldRoutes, { prefix: '/api/v1' });
 
 // 启动服务
 const start = async () => {
