@@ -118,7 +118,7 @@ model PaymentRoute {
   @@index([fromChain, toChain])
 }
 
-// 用户意图 (Phase 2 预留)
+// 用户意图 (Phase 2)
 model UserIntent {
   id          String   @id @default(uuid())
   userId      String
@@ -126,7 +126,9 @@ model UserIntent {
   
   type        String   // transport, food, shopping, service
   intent      String   // JSON
-  preferences String?  // JSON
+  
+  // 广告相关
+  preferences String?  // JSON: { wantAds: true, maxWaitMinutes: 10, maxGroupSize: 4 }
   
   status      String   // pending, matching, matched, completed, cancelled
   
@@ -135,5 +137,33 @@ model UserIntent {
   expiresAt   DateTime?
 
   @@index([userId])
+  @@index([status])
+}
+
+// Agent 广告出价 (Phase 2 新增)
+model AgentBid {
+  id          String   @id @default(uuid())
+  
+  agentId     String   // Agent ID
+  intentId    String   // 关联的 Intent
+  
+  bidType     String   // driver_bid, restaurant_promo, service_offer, affiliate
+  
+  // 出价
+  amount      Float    // 愿意支付的费用
+  originalPrice Float? // 原始价格
+  discount    String?  // 让利: "25%"
+  
+  // 附加信息
+  eta         Int?     // 预计到达时间(分钟)
+  rating      Float?
+  message     String?
+  
+  status      String   // pending, accepted, rejected
+  
+  createdAt   DateTime @default(now())
+  
+  @@index([agentId])
+  @@index([intentId])
   @@index([status])
 }
