@@ -1,4 +1,5 @@
 import { FastifyInstance } from 'fastify';
+import { prisma } from '../db/prisma.js';
 import {
   createIntent,
   getIntent,
@@ -83,6 +84,12 @@ export async function intentRoutes(fastify: FastifyInstance) {
     Params: { intentId: string };
   }>('/intent/:intentId/offers', async (request, reply) => {
     const { intentId } = request.params;
+    
+    // 检查 intent 是否存在
+    const intent = await getIntent(intentId);
+    if (!intent) {
+      return reply.status(404).send({ error: 'Intent not found' });
+    }
     
     const offers = await generateOffersForIntent(intentId);
     
@@ -201,7 +208,6 @@ export async function agentRoutes(fastify: FastifyInstance) {
     const { agentId } = request.params;
     const { status } = request.query;
     
-    const { prisma } = await import('../phase2/ads.js');
     const where: any = { agentId };
     if (status) where.status = status;
     

@@ -3,9 +3,7 @@
  * 核心原则: Agent 抽 5%, 用户省 20%
  */
 
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { prisma } from '../db/prisma.js';
 
 // ==================== 类型定义 ====================
 

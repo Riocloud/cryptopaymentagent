@@ -1,8 +1,6 @@
 import { FastifyInstance } from 'fastify';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../db/prisma.js';
 import { encrypt, decrypt, generatePassphrase } from '../utils/crypto.js';
-
-const prisma = new PrismaClient();
 
 export async function exchangeRoutes(fastify: FastifyInstance) {
   

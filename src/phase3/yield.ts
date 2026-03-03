@@ -3,9 +3,7 @@
  * 核心功能: 用户的钱自动生利，Agent 规划投资
  */
 
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { prisma } from '../db/prisma.js';
 
 // ==================== 类型定义 ====================
 
@@ -116,59 +114,68 @@ export async function deposit(params: DepositParams) {
 }
 
 /**
- * 提现
+ * 提现 (带事务)
  */
 export async function withdraw(params: WithdrawParams) {
-  const account = await prisma.yieldAccount.findUnique({ 
-    where: { userId: params.userId } 
-  });
-  
-  if (!account) {
-    throw new Error('Yield account not found');
-  }
-  
-  if (account.totalValueUSD < params.amountUSD) {
-    throw new Error('Insufficient balance');
-  }
-  
-  // 查找持仓 (按 APY 从低到高提，保留高收益)
-  const holdings = await prisma.yieldHolding.findMany({
-    where: { accountId: account.id },
-    orderBy: { apy: 'asc' }
-  });
-  
-  let remaining = params.amountUSD;
-  const withdrawn: any[] = [];
-  
-  for (const holding of holdings) {
-    if (remaining <= 0) break;
+  return await prisma.$transaction(async (tx) => {
+    const account = await tx.yieldAccount.findUnique({ 
+      where: { userId: params.userId } 
+    });
     
-    const withdrawFromHolding = Math.min(holding.valueUSD, remaining);
+    if (!account) {
+      throw new Error('Yield account not found');
+    }
     
-    await prisma.yieldHolding.update({
-      where: { id: holding.id },
+    if (account.totalValueUSD < params.amountUSD) {
+      throw new Error('Insufficient balance');
+    }
+    
+    // 查找持仓 (按 APY 从低到高提，保留高收益)
+    const holdings = await tx.yieldHolding.findMany({
+      where: { accountId: account.id },
+      orderBy: { apy: 'asc' }
+    });
+    
+    let remaining = params.amountUSD;
+    const withdrawn: any[] = [];
+    
+    for (const holding of holdings) {
+      if (remaining <= 0) break;
+      
+      const withdrawFromHolding = Math.min(holding.valueUSD, remaining);
+      
+      const newAmount = holding.amount - withdrawFromHolding;
+      
+      if (newAmount <= 0) {
+        // 删除持仓为 0 的记录
+        await tx.yieldHolding.delete({ where: { id: holding.id } });
+      } else {
+        await tx.yieldHolding.update({
+          where: { id: holding.id },
+          data: {
+            amount: newAmount,
+            valueUSD: { decrement: withdrawFromHolding }
+          }
+        });
+      }
+      
+      withdrawn.push({ token: holding.token, amount: withdrawFromHolding });
+      remaining -= withdrawFromHolding;
+    }
+    
+    // 更新总资产
+    await tx.yieldAccount.update({
+      where: { id: account.id },
       data: {
-        amount: { decrement: withdrawFromHolding },
-        valueUSD: { decrement: withdrawFromHolding }
+        totalValueUSD: { decrement: params.amountUSD }
       }
     });
     
-    withdrawn.push({ token: holding.token, amount: withdrawFromHolding });
-    remaining -= withdrawFromHolding;
-  }
-  
-  // 更新总资产
-  await prisma.yieldAccount.update({
-    where: { id: account.id },
-    data: {
-      totalValueUSD: { decrement: params.amountUSD }
-    }
+    return {
+      withdrawn,
+      remainingBalance: account.totalValueUSD - params.amountUSD
+    };
   });
-  
-  return {
-    withdrawn,
-    remainingBalance: account.totalValueUSD - params.amountUSD
-  };
 }
 
 // ==================== 策略 ====================
