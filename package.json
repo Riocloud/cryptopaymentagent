@@ -26,6 +26,7 @@
     "@fastify/cors": "^10.0.0",
     "@prisma/client": "^6.0.0",
     "axios": "^1.13.6",
+    "better-sqlite3": "^12.6.2",
     "dotenv": "^17.3.1",
     "fastify": "^5.0.0"
   },

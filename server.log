@@ -1,0 +1,9 @@
+{"level":30,"time":1772546536265,"pid":28946,"hostname":"08afcfbcbfdd","msg":"Server listening at http://127.0.0.1:3000"}
+Server running on http://0.0.0.0:3000
+{"level":30,"time":1772546536265,"pid":28946,"hostname":"08afcfbcbfdd","msg":"Server listening at http://172.17.0.2:3000"}
+{"level":30,"time":1772546537780,"pid":28946,"hostname":"08afcfbcbfdd","reqId":"req-1","req":{"method":"POST","url":"/api/v1/exchange/bind","host":"127.0.0.1:3000","remoteAddress":"127.0.0.1","remotePort":57716},"msg":"incoming request"}
+{"level":30,"time":1772546537872,"pid":28946,"hostname":"08afcfbcbfdd","reqId":"req-1","res":{"statusCode":200},"responseTime":91.2349089384079,"msg":"request completed"}
+{"level":30,"time":1772546543642,"pid":28946,"hostname":"08afcfbcbfdd","reqId":"req-2","req":{"method":"POST","url":"/api/v1/wallet","host":"127.0.0.1:3000","remoteAddress":"127.0.0.1","remotePort":47146},"msg":"incoming request"}
+{"level":30,"time":1772546543651,"pid":28946,"hostname":"08afcfbcbfdd","reqId":"req-2","res":{"statusCode":200},"responseTime":8.756661057472229,"msg":"request completed"}
+{"level":30,"time":1772546549151,"pid":28946,"hostname":"08afcfbcbfdd","reqId":"req-3","req":{"method":"POST","url":"/api/v1/payment","host":"127.0.0.1:3000","remoteAddress":"127.0.0.1","remotePort":47148},"msg":"incoming request"}
+{"level":30,"time":1772546549165,"pid":28946,"hostname":"08afcfbcbfdd","reqId":"req-3","res":{"statusCode":200},"responseTime":14.092599987983704,"msg":"request completed"}

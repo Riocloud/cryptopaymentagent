@@ -6,8 +6,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 // 用户
@@ -38,7 +38,7 @@ model ExchangeBinding {
   // 加密存储的凭证
   credentials String   // 加密后的 JSON
   
-  permissions String[] // ['spot', 'wallet', 'trade']
+  permissions String   // comma-separated: 'spot,wallet,trade'
   
   createdAt   DateTime @default(now())
   expiresAt   DateTime? // OAuth 时需要

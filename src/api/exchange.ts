@@ -24,12 +24,21 @@ export async function exchangeRoutes(fastify: FastifyInstance) {
       return reply.status(400).send({ error: 'Unsupported exchange' });
     }
     
+    // Auto-create user if not exists
+    let user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      user = await prisma.user.create({ data: { id: userId } });
+    }
+    
     // 用用户 passphrase 加密（这里先用系统 passphrase，实际需要用户端提供）
     const systemPassphrase = process.env.SYSTEM_PASSPHRASE || 'default-dev-passphrase';
     const encryptedCredentials = encrypt(
       JSON.stringify({ apiKey, apiSecret }),
       systemPassphrase
     );
+    
+    // Convert array to comma-separated string for SQLite
+    const permissionsStr = permissions.join(',');
     
     const binding = await prisma.exchangeBinding.upsert({
       where: {
@@ -40,7 +49,7 @@ export async function exchangeRoutes(fastify: FastifyInstance) {
       },
       update: {
         credentials: encryptedCredentials,
-        permissions,
+        permissions: permissionsStr,
         authType: 'api_key'
       },
       create: {
@@ -48,7 +57,7 @@ export async function exchangeRoutes(fastify: FastifyInstance) {
         exchange: exchange.toLowerCase(),
         authType: 'api_key',
         credentials: encryptedCredentials,
-        permissions
+        permissions: permissionsStr
       }
     });
     
