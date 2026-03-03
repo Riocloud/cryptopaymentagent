@@ -225,3 +225,111 @@ model YieldRecord {
   
   @@index([accountId])
 }
+
+// Phase 2.5: 托管系统 (Escrow)
+model Escrow {
+  id            String   @id @default(uuid())
+  
+  // 关联
+  paymentId     String?  // 关联的 Payment
+  groupId       String?  // 关联的 Group
+  
+  // 金额
+  amountUSD     Float
+  token         String   // USDC, USDT
+  chain         String
+  
+  // 参与方
+  payerId       String   // 付款方
+  payeeId       String   // 收款方 (Agent/司机)
+  
+  // 状态
+  status        String   // pending, locked, released, disputed, refunded
+  
+  // 托管时间
+  lockedAt      DateTime?
+  releasedAt    DateTime?
+  expiresAt     DateTime?
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@index([payerId])
+  @@index([payeeId])
+  @@index([status])
+}
+
+// Phase 2.5: 声誉系统
+model Reputation {
+  id            String   @id @default(uuid())
+  
+  entityType    String   // 'user' | 'agent'
+  entityId      String
+  
+  // 分数 (0-100)
+  score         Float    @default(50)
+  
+  // 统计
+  totalRatings  Int      @default(0)
+  positiveRatings Int    @default(0)
+  negativeRatings Int    @default(0)
+  
+  // 争议次数
+  disputes      Int      @default(0)
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@unique([entityType, entityId])
+  @@index([entityId])
+}
+
+// 评分记录
+model Rating {
+  id            String   @id @default(uuid())
+  
+  // 评分者
+  raterType     String   // 'user' | 'agent'
+  raterId       String
+  
+  // 被评者
+  targetType    String   // 'user' | 'agent'
+  targetId      String
+  
+  // 分数 (-1, 0, 1) 或 (1-5)
+  score         Int
+  
+  // 原因
+  reason        String?  // 'on_time' | 'no_show' | 'good_service' | etc.
+  comment       String?
+  
+  // 关联交易
+  escrowId      String?
+  
+  createdAt     DateTime @default(now())
+  
+  @@index([targetId])
+  @@index([raterId])
+}
+
+// Phase 2.5: Agent 保证金
+model AgentBond {
+  id            String   @id @default(uuid())
+  
+  agentId       String   @unique
+  
+  // 保证金金额
+  bondAmountUSD Float    @default(0)
+  
+  // 状态
+  status        String   // active, frozen, released
+  
+  // 冻结原因
+  frozenReason  String?
+  frozenAt     DateTime?
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@index([agentId])
+}
